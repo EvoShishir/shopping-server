@@ -14,6 +14,7 @@ app.use(bodyParser.json());
 
 const products = require("./src/routes/productRoutes");
 const payment = require("./src/routes/paymentRoutes");
+const users = require("./src/routes/userRoutes");
 
 //connecting the database
 connectDatabase();
@@ -24,6 +25,7 @@ app.use("/images", express.static(path.join(__dirname, "src/uploads")));
 //other routes that will handle different operations
 app.use("/products", products);
 app.use("/payment", payment);
+app.use("/users", users);
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
