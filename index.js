@@ -12,6 +12,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+const category = require("./src/routes/categoryRoutes");
 const products = require("./src/routes/productRoutes");
 const payment = require("./src/routes/paymentRoutes");
 const users = require("./src/routes/userRoutes");
@@ -23,6 +24,7 @@ connectDatabase();
 app.use("/images", express.static(path.join(__dirname, "src/uploads")));
 
 //other routes that will handle different operations
+app.use("/categories", category);
 app.use("/products", products);
 app.use("/payment", payment);
 app.use("/users", users);
