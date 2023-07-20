@@ -1,8 +1,50 @@
-const User = require("../models/userModel");
+const bcrypt = require("bcrypt");
+const { User } = require("../models/userModel");
 
 const createUser = async (req, res, next) => {
   try {
-    const user = await User.create(req.body);
+    let user = new User({
+      name: req.body.name,
+      email: req.body.email.toLowerCase(),
+      role: req.body.role.toLowerCase(),
+      password: req.body.password,
+    });
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
+
+    user = await user.save();
+
+    const token = user.generateAuthToken();
+
+    res.header("x-auth-token", token).json({
+      success: true.valueOf,
+      user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getMyProfile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).select([
+      "-role",
+      "-password",
+      "-createdAt",
+      "-updatedAt",
+    ]);
+    res.send(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateMyProfile = async (req, res, next) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.user._id, req.body, {
+      new: true,
+    }).select(["-role", "-password", "-createdAt", "-updatedAt"]);
     res.status(200).json({
       success: true,
       user,
@@ -14,7 +56,12 @@ const createUser = async (req, res, next) => {
 
 const getUsers = async (req, res, next) => {
   try {
-    const users = await User.find();
+    const users = await User.find().select([
+      "-role",
+      "-password",
+      "-createdAt",
+      "-updatedAt",
+    ]);
     res.status(200).json({
       success: true,
       users,
@@ -24,5 +71,35 @@ const getUsers = async (req, res, next) => {
   }
 };
 
+const loginUser = async (req, res, next) => {
+  try {
+    let user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(400).send("Invalid email or password.");
+    }
+
+    const validPassword = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
+    if (!validPassword) {
+      return res.status(400).send("Invalid email or password.");
+    }
+
+    const token = user.generateAuthToken();
+
+    res.json({
+      success: true,
+      user,
+      token,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.createUser = createUser;
 exports.getUsers = getUsers;
+exports.loginUser = loginUser;
+exports.getMyProfile = getMyProfile;
+exports.updateMyProfile = updateMyProfile;

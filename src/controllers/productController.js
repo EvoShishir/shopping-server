@@ -3,11 +3,18 @@ const Category = require("../models/categoryModel");
 
 const createProduct = async (req, res, next) => {
   try {
+    const category = await Category.findById(req.body.category);
+    if (!category) {
+      return res.status(400).json({
+        success: false,
+        message: "Category Invalid",
+      });
+    }
     const product = await Product.create({
       ...req.body,
       image: req.file.filename,
     });
-    res.status(200).json({
+    res.status(201).json({
       success: true,
       product,
     });
@@ -60,7 +67,7 @@ const getProductsByCategory = async (req, res, next) => {
 
 const getSingleProduct = async (req, res, next) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id).populate("category");
     res.status(200).json({
       success: true,
       product,
@@ -73,7 +80,7 @@ const getSingleProduct = async (req, res, next) => {
 const updateProductById = async (req, res, next) => {
   const productId = req.params.id;
   const updateData = req.body;
-  const updatedImage = req.file.filename;
+  const updatedImage = req?.file?.filename;
 
   try {
     const updatedProduct = await Product.findByIdAndUpdate(

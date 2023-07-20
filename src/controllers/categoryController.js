@@ -5,7 +5,7 @@ const createCategory = async (req, res, next) => {
     const category = await Category.create({
       name: req.body.name.toLowerCase(),
     });
-    res.status(200).json({
+    res.status(201).json({
       success: true,
       category,
     });
@@ -46,6 +46,26 @@ const updateCategory = async (req, res, next) => {
   }
 };
 
+const deleteCategory = async (req, res, next) => {
+  try {
+    const category = await Category.findByIdAndDelete(req.params.id);
+    if (!category) {
+      res.status(400).json({
+        success: false,
+        message: `No category found for id ${req.params.id}`,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Category ${category.name} of id ${category._id} is deleted.`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.createCategory = createCategory;
 exports.getCategories = getCategories;
 exports.updateCategory = updateCategory;
+exports.deleteCategory = deleteCategory;

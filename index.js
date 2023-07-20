@@ -16,11 +16,12 @@ const category = require("./src/routes/categoryRoutes");
 const products = require("./src/routes/productRoutes");
 const payment = require("./src/routes/paymentRoutes");
 const users = require("./src/routes/userRoutes");
+const orders = require("./src/routes/orderRoutes");
 
 //connecting the database
 connectDatabase();
 
-//get the saved image from this route
+//get the saved image from this route "/images/{imageName}"
 app.use("/images", express.static(path.join(__dirname, "src/uploads")));
 
 //other routes that will handle different operations
@@ -28,6 +29,7 @@ app.use("/categories", category);
 app.use("/products", products);
 app.use("/payment", payment);
 app.use("/users", users);
+app.use("/orders", orders);
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => {

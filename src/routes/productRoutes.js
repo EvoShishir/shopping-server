@@ -10,19 +10,21 @@ const {
   deleteProduct,
   getProductsByCategory,
 } = require("../controllers/productController");
+const auth = require("../middleware/auth");
+const admin = require("../middleware/admin");
 
 router
-  .route("/create-product")
-  .post(multerUpload.single("image"), createProduct);
+  .route("/create")
+  .post(multerUpload.single("image"), [auth, admin], createProduct);
 
 router
-  .route("/update-product/:id")
-  .put(multerUpload.single("image"), updateProductById);
+  .route("/update/:id")
+  .put(multerUpload.single("image"), [auth, admin], updateProductById);
 
-router.route("/all-products").get(getProducts);
-router.route("/all-products/:id").get(getSingleProduct);
-router.route("/:categoryName").get(getProductsByCategory);
+router.route("/all").get(getProducts);
+router.route("/:id").get(getSingleProduct);
+router.route("/category/:categoryName").get(getProductsByCategory);
 
-router.route("/delete-product/:id").delete(deleteProduct);
+router.route("/delete/:id").delete([auth, admin], deleteProduct);
 
 module.exports = router;
