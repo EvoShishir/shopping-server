@@ -1,5 +1,6 @@
 const Order = require("../models/orderModel");
 const { User } = require("../models/userModel");
+const { Product } = require("../models/productModel");
 
 const placeOrder = async (req, res, next) => {
   const { products, totalAmount, shipping, paymentMethod } = req.body;
@@ -33,6 +34,19 @@ const placeOrder = async (req, res, next) => {
     });
 
     const savedOrder = await newOrder.save();
+
+    for (const orderedProduct of products) {
+      const product = await Product.findById(orderedProduct.product);
+
+      if (!product) {
+        return res.status(404).json({ message: "Product not found." });
+      }
+
+      // Subtract the ordered quantity from the product stock
+      product.stock -= orderedProduct.quantity;
+      await product.save();
+    }
+
     res.status(201).json({
       success: true,
       savedOrder,
