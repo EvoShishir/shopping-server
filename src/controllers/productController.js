@@ -26,6 +26,7 @@ const createProduct = async (req, res, next) => {
 const getProducts = async (req, res, next) => {
   try {
     const products = await Product.find()
+      .sort("name")
       .populate("category", "name")
       .select(["-__v", "-createdAt", "-updatedAt"]);
     res.status(200).json({
