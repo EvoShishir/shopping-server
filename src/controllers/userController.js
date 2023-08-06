@@ -101,15 +101,6 @@ const loginUser = async (req, res, next) => {
 
 const logoutUser = async (req, res, next) => {
   try {
-    // Invalidate the user's token (optional step, depending on the authentication mechanism used)
-    // For example, if using JSON Web Tokens (JWT), you can simply blacklist the token on the server-side
-    // and ensure it is no longer considered valid for future requests.
-
-    // Example using JWT:
-    // const token = req.header("Authorization").replace("Bearer ", "");
-    // user.blacklistToken(token); // You would need to implement this method in the UserModel
-
-    // If you are using sessions, you can simply destroy the session to log out the user
     req.session.destroy();
 
     res.status(200).json({

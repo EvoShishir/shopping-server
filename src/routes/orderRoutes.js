@@ -13,7 +13,7 @@ const router = express.Router();
 router.route("/create").post(auth, placeOrder);
 router.route("/all").get([auth, admin], getAllOrders);
 router.route("/my").get(auth, getUserOrders);
-router.route("/:id").get([auth, admin], getOrderById);
+router.route("/:id").get(auth, getOrderById);
 router.route("/update/:id").put([auth, admin], updateOrderStatus);
 
 module.exports = router;
