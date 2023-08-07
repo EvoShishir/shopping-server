@@ -8,6 +8,7 @@ const {
   getMyProfile,
   updateMyProfile,
   logoutUser,
+  updateUserRole,
 } = require("../controllers/userController");
 const admin = require("../middleware/admin");
 const auth = require("../middleware/auth");
@@ -21,6 +22,7 @@ router.use(
 );
 
 router.route("/me").get(auth, getMyProfile);
+router.route("/update-role/:id").put([auth, admin], updateUserRole);
 router.route("/update-me").put(auth, updateMyProfile);
 router.route("/create-user").post(createUser);
 router.route("/get-users").get([auth, admin], getUsers);

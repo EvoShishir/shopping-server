@@ -55,10 +55,23 @@ const updateMyProfile = async (req, res, next) => {
   }
 };
 
+const updateUserRole = async (req, res, next) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    }).select(["-password", "-createdAt", "-updatedAt"]);
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getUsers = async (req, res, next) => {
   try {
     const users = await User.find().select([
-      "-role",
       "-password",
       "-createdAt",
       "-updatedAt",
@@ -113,6 +126,7 @@ const logoutUser = async (req, res, next) => {
 };
 
 exports.createUser = createUser;
+exports.updateUserRole = updateUserRole;
 exports.getUsers = getUsers;
 exports.loginUser = loginUser;
 exports.getMyProfile = getMyProfile;
