@@ -32,7 +32,7 @@ userSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(
     { _id: this._id, name: this.name, role: this.role },
     process.env.JWT_PRIVATE_KEY,
-    { expiresIn: "2h" }
+    { expiresIn: "24h" }
   );
   return token;
 };

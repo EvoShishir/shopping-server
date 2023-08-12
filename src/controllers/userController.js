@@ -35,7 +35,10 @@ const getMyProfile = async (req, res, next) => {
       "-createdAt",
       "-updatedAt",
     ]);
-    res.send(user);
+    res.status(200).json({
+      success: true,
+      user,
+    });
   } catch (error) {
     next(error);
   }
