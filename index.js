@@ -17,6 +17,7 @@ const products = require("./src/routes/productRoutes");
 const payment = require("./src/routes/paymentRoutes");
 const users = require("./src/routes/userRoutes");
 const orders = require("./src/routes/orderRoutes");
+const reviews = require("./src/routes/reviewRoutes");
 
 //connecting the database
 connectDatabase();
@@ -30,6 +31,7 @@ app.use("/products", products);
 app.use("/payment", payment);
 app.use("/users", users);
 app.use("/orders", orders);
+app.use("/reviews", reviews);
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => {
