@@ -4,14 +4,14 @@ const { Product } = require("../models/productModel");
 
 const createReview = async (req, res, next) => {
   try {
-    const user = await User.findById(req.body.user);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(400).json({
         success: false,
         message: "User Invalid",
       });
     }
-    const product = await Product.findById(req.body.product);
+    const product = await Product.findById(req.params.id);
     if (!product) {
       return res.status(400).json({
         success: false,
@@ -19,6 +19,8 @@ const createReview = async (req, res, next) => {
       });
     }
     const review = await Review.create({
+      user: user._id,
+      product: req.params.id,
       ...req.body,
     });
     res.status(201).json({
@@ -30,9 +32,12 @@ const createReview = async (req, res, next) => {
   }
 };
 
-const getReviews = async (req, res, next) => {
+const getProductReviews = async (req, res, next) => {
   try {
-    const reviews = await Review.find();
+    const reviews = await Review.find({ product: req.params.id }).populate(
+      "user product",
+      "name"
+    );
     res.status(200).json({
       success: true,
       reviews,
@@ -43,4 +48,4 @@ const getReviews = async (req, res, next) => {
 };
 
 exports.createReview = createReview;
-exports.getReviews = getReviews;
+exports.getProductReviews = getProductReviews;
