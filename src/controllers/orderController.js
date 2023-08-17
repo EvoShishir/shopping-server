@@ -110,8 +110,46 @@ const getUserOrders = async (req, res, next) => {
   }
 };
 
+const checkProductOrder = async (req, res, next) => {
+  try {
+    const orders = await Order.find({ user: req.user })
+      .populate("products.product", "name")
+      .select([
+        "-shipping",
+        "-status",
+        "-totalAmount",
+        "-createdAt",
+        "-updatedAt",
+      ]);
+    let found = false;
+
+    orders.forEach((order) => {
+      order.products.forEach((product) => {
+        const productId = product.product._id.toString();
+        console.log(productId);
+        if (productId === req.params.id) {
+          found = true;
+        }
+      });
+    });
+
+    if (found) {
+      res.status(200).json({
+        ordered: true,
+      });
+    } else {
+      res.status(200).json({
+        ordered: false,
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.placeOrder = placeOrder;
 exports.getAllOrders = getAllOrders;
 exports.getOrderById = getOrderById;
 exports.getUserOrders = getUserOrders;
+exports.checkProductOrder = checkProductOrder;
 exports.updateOrderStatus = updateOrderStatus;
